@@ -28,4 +28,29 @@ For each type of report, we produce the following files with the relevant primar
 	* also includes columns: block, district, state
 
 For each state, we aggregate all the files from #4, then join them to #3, then join them to #2. The final dataset is at the state level.
- 
+
+#### Scripts & Usage
+
+To scrape R1 data for a specific year, such as 2023, follow these steps:
+
+Run the following command in your terminal:
+
+```
+python mnrega_r1.py 2023
+```
+
+The CSV files will be saved in the directory `{year}-csv/`.
+
+To scrape R6 data for the same year, repeat the above steps but use the `mnrega_r6.py` script instead:
+
+```
+python mnrega_r6.py 2023
+```
+
+After scraping the data, you can combine multiple CSV files into a single file using the following command:
+
+```
+python combine_csv.py "2023-csv/r1_panchayat_*.csv" output/r1-all-2023.csv
+```
+
+This command will combine all the files that match the specified pattern and save the merged data to a single CSV file named `r1-all-2023.csv` in the `output/` directory.
