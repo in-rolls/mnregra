@@ -1,8 +1,8 @@
 ### MNREGA Data
 
-We scrape data from [MNREGA](https://nrega.nic.in/netnrega/mgnrega_new/Nrega_home.aspx). 
+We scrape data from [MNREGA](https://nrega.nic.in/MGNREGA_new/Nrega_home.aspx).
 
-In particular, we scrape some of the data from [Reports](https://mnregaweb4.nic.in/netnrega/MISreport4.aspx). We get data for all the years and all the states starting with 2023-2024.
+In particular, we scrape some of the data from [Reports](https://nreganarep.nic.in/netnrega/MISreport4.aspx). We get data for all the years and all the states starting with 2023-2024.
 
 We only get two datasets:
 
