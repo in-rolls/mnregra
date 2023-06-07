@@ -51,6 +51,16 @@ if __name__ == '__main__':
         print("Please provide a year as a command line argument.")
         sys.exit(-1)
 
+    outdir = f'{year}-csv/'
+
+    # Check if the directory exists
+    if not os.path.exists(outdir):
+        # Create the directory
+        os.makedirs(outdir)
+        print(f"Directory '{outdir}' created.")
+    else:
+        print(f"Directory '{outdir}' already exists.")
+
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
     s = requests.Session()
@@ -82,7 +92,7 @@ if __name__ == '__main__':
                 dfs = pd.read_html(r2.content, encoding='utf-8')
                 df = dfs[6]
                 df['state'] = state
-                clean_and_save_csv(df, 'csv/r1_district_{0:s}.csv'.format(state))
+                clean_and_save_csv(df, f'{year}-csv/r1_district_{state}.csv')
                 soup2 = BeautifulSoup(r2.content, 'lxml')
                 districts = []
                 for l in soup2.find_all('a', {'href': re.compile('app_issue\.aspx.*')}):
@@ -98,7 +108,7 @@ if __name__ == '__main__':
                             df = dfs[6]
                             df['state'] = state
                             df['district'] = district
-                            clean_and_save_csv(df, 'csv/r1_block_{0:s}+{1:s}.csv'.format(district, state))
+                            clean_and_save_csv(df, f'{year}-csv/r1_block_{district}+{state}.csv')
                             soup3 = BeautifulSoup(r3.content, 'lxml')
                             blocks = []
                             for l in soup3.find_all('a', {'href': re.compile('app_issue\.aspx.*')}):
@@ -115,7 +125,7 @@ if __name__ == '__main__':
                                         df['state'] = state
                                         df['district'] = district
                                         df['block'] = block
-                                        clean_and_save_csv(df, 'csv/r1_panchayat_{0:s}+{1:s}+{2:s}.csv'.format(block, district, state))
+                                        clean_and_save_csv(df, f'{year}-csv/r1_panchayat_{block}+{district}+{state}.csv')
                                     except Exception as e:
                                         print('ERROR', e)
                                 else:
