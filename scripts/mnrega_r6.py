@@ -55,8 +55,8 @@ if __name__ == '__main__':
     s = requests.Session()
 
     r1 = s.get(f'https://mnregaweb4.nic.in/netnrega/Citizen_html/stworkreptemp_n.aspx?lflag=eng&fin_year={year}-{year + 1}&source=national&labels=labels&Digest=MZ7EPgZ8ZwgnIaImm+t7hA', headers=headers)
-    if r1.status != 200:
-        print(f'Error to get start URL {r1.status}')
+    if r1.status_code != 200:
+        print(f'Error to get start URL with status code: {r1.status_code}')
         sys.exit(-1)
 
     dfs = pd.read_html(r1.content, encoding='utf-8')
