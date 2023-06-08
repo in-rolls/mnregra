@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     dfs = pd.read_html(r1.content, encoding='utf-8')
     df = dfs[6]
-    clean_and_save_csv(df, 'csv/r1_state.csv')
+    clean_and_save_csv(df, f'{year}-csv/r1_state.csv')
 
     soup1 = BeautifulSoup(r1.content, 'lxml')
     states = []
