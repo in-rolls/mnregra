@@ -54,3 +54,7 @@ python combine_csv.py "2023-csv/r1_panchayat_*.csv" output/r1-all-2023.csv
 ```
 
 This command will combine all the files that match the specified pattern and save the merged data to a single CSV file named `r1-all-2023.csv` in the `output/` directory.
+
+#### Data
+
+The output CSV files are posted at [Harvard Dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZHF9WC)
