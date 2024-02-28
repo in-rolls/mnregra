@@ -8,6 +8,41 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
+states = {'01': 'ANDAMAN AND NICOBAR',
+'02': 'ANDHRA PRADESH',
+'03': 'ARUNACHAL PRADESH',
+'04': 'ASSAM',
+'05': 'BIHAR',
+'33': 'CHHATTISGARH',
+'07': 'DN HAVELI AND DD',
+'10': 'GOA',
+'11': 'GUJARAT',
+'12': 'HARYANA',
+'13': 'HIMACHAL PRADESH',
+'14': 'JAMMU AND KASHMIR',
+'34': 'JHARKHAND',
+'15': 'KARNATAKA',
+'16': 'KERALA',
+'37': 'LADAKH',
+'19': 'LAKSHADWEEP',
+'17': 'MADHYA PRADESH',
+'18': 'MAHARASHTRA',
+'20': 'MANIPUR',
+'21': 'MEGHALAYA',
+'22': 'MIZORAM',
+'23': 'NAGALAND',
+'24': 'ODISHA',
+'25': 'PUDUCHERRY',
+'26': 'PUNJAB',
+'27': 'RAJASTHAN',
+'28': 'SIKKIM',
+'29': 'TAMIL NADU',
+'36': 'TELANGANA',
+'30': 'TRIPURA',
+'31': 'UTTAR PRADESH',
+'35': 'UTTARAKHAND',
+'32': 'WEST BENGAL'
+}
 
 def clean_and_save_csv(df, fn):
     bfn = os.path.basename(fn)
@@ -65,33 +100,24 @@ if __name__ == '__main__':
 
     s = requests.Session()
 
-    r1 = s.get(f'https://mnregaweb4.nic.in/netnrega/Citizen_html/stworkreptemp_n.aspx?lflag=eng&fin_year={year}-{year + 1}&source=national&labels=labels&Digest=MZ7EPgZ8ZwgnIaImm+t7hA', headers=headers)
-    if r1.status_code != 200:
-        print(f'Error to get start URL with status code: {r1.status_code}')
-        sys.exit(-1)
+    for statecode in states:
+        state = states[statecode]
+        r1 = s.get(f'https://nreganarep.nic.in/netnrega/Work_Status_Frame.aspx?page=s&lflag=eng&state_name={state}&state_code={statecode}&fin_year={year}-{year + 1}&source=national&Digest=bQ/JzQJ6DxCJ+QXKE6WnuA', headers=headers)
+        if r1.status_code != 200:
+            print(f'Error to get start URL with status code: {r1.status_code}')
+            sys.exit(-1)
 
-    dfs = pd.read_html(r1.content, encoding='utf-8')
-    df = dfs[1]
-    clean_and_save_csv(df, f'{year}-csv/r6_state.csv')
-
-    soup1 = BeautifulSoup(r1.content, 'lxml')
-    states = []
-    for l in soup1.find_all('a', {'href': re.compile('stworkreptemp_n\.aspx.*')}):
-        #print(l['href'])
-        print(l.text)
-        states.append((l.text, l['href']))
-    print(f'Number of state: {len(states)}')
-
-    for st in states:
-        state = st[0].strip()
         print('- State:', state)
 
-        url = 'https://mnregaweb4.nic.in/netnrega/Citizen_html/' + st[1]
+        soup1 = BeautifulSoup(r1.content, 'lxml')
+        l = soup1.find('iframe', {'src': re.compile('stworkreptemp_n\.aspx.*')})
+
+        url = 'https://nreganarep.nic.in/netnrega/' + l['src']
         r2 = s.get(url, headers=headers)
         if r2.status_code == 200:
             try:
                 dfs = pd.read_html(r2.content, encoding='utf-8')
-                df = dfs[1]
+                df = dfs[3]
                 df['state'] = state
                 clean_and_save_csv(df, f'{year}-csv/r6_district_{state}.csv')
                 soup2 = BeautifulSoup(r2.content, 'lxml')
@@ -101,12 +127,12 @@ if __name__ == '__main__':
                 for dt in districts:
                     district = dt[0].strip()
                     print('  - District:', district)
-                    url = 'https://mnregaweb4.nic.in/netnrega/Citizen_html/' + dt[1]
+                    url = 'https://nreganarep.nic.in/netnrega/Citizen_html/' + dt[1]
                     r3 = s.get(url, headers=headers)
                     if r3.status_code == 200:
                         try:
                             dfs = pd.read_html(r3.content, encoding='utf-8')
-                            df = dfs[1]
+                            df = dfs[3]
                             df['state'] = state
                             df['district'] = district
                             clean_and_save_csv(df, f'{year}-csv/r6_block_{district}+{state}.csv')
@@ -117,12 +143,12 @@ if __name__ == '__main__':
                             for bl in blocks:
                                 block = bl[0].strip()
                                 print('    - Block:', block)
-                                url = 'https://mnregaweb4.nic.in/netnrega/Citizen_html/' + bl[1]
+                                url = 'https://nreganarep.nic.in/netnrega/Citizen_html/' + bl[1]
                                 r4 = s.get(url, headers=headers)
                                 if r4.status_code == 200:
                                     try:
                                         dfs = pd.read_html(r4.content, encoding='utf-8')
-                                        df = dfs[1]
+                                        df = dfs[3]
                                         df['state'] = state
                                         df['district'] = district
                                         df['block'] = block
